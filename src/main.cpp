@@ -1,111 +1,53 @@
-#include <iostream>
-#include <deque>
+#include <SFML/Graphics.hpp>
+#include <Jugador.hpp>
+#include <BandaTransportadora.hpp>
 
-using namespace std;
+double velocidadJugador = 0.2;
+double velocidadObstaculos = 0.15;
 
-class cPlayer
-{
-public:
-    int x, y;
-    cPlayer(int width)
-    {
-        x = width / 2;
-        y = 0;
-    }
-};
-class cLane
-{
-private:
-    deque<bool> cars;
+int main(){
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Crossy-Road");
+    
+    Jugador jugador(sf::Vector2f(400,500), sf::Color::Blue);
+    
+    BandaTransportadora banda1(sf::Vector2f(0,100),5,sf::Color::Green,120,true);
+    BandaTransportadora banda2(sf::Vector2f(0,200),5,sf::Color::Green,120,false);
+    BandaTransportadora banda3(sf::Vector2f(0,300),5,sf::Color::Green,120,true);
+    BandaTransportadora banda4(sf::Vector2f(0,400),5,sf::Color::Green,120,false);
+    std::vector<BandaTransportadora> bandas = {banda1, banda2, banda3, banda4};
 
-public:
-    cLane(int width)
-    {
-        for (int i = 0; i < width; i++)
-            cars.push_front(false);
-    }
-    void Move()
-    {
-        if (rand() % 10 == 1)
-            cars.push_front(true);
-        else
-            cars.push_front(false);
-        cars.pop_back();
-    }
-    bool CheckPos(int pos) { return cars[pos]; }
-};
-class cGame
-{
-private:
-    bool quit;
-    int numberOfLanes;
-    int width;
-    int score;
-    Cplayer *player;
-    vector<cLane *> map;
-
-public:
-    cGame(int w = 20, int h = 10)
-    {
-        numberofLanes = h;
-        width = w;
-        quite = false;
-        for (int i = 0; i < numberOfLanes; i++)
-            map.push_back(new cLane(width));
-        player = new cPLAYER(width);
-    }
-    void Draw()
-    {
-        system("cls");
-        for (int i = 0; i < numberOfLanes; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                if (map[i]->Checkpos(j))
-                    cout << "#";
-                else if (player->x == j && player->y == i)
-                    cout << "V";
-                else
-                    cout << " ";
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
             }
-            cout << endl;
         }
-    }
-    void Input()
-    {
-    }
-    void Logic()
-    {
-    }
-    void Run()
-    {
-        while (!quit)
-        {
-            Input();
-            Draw();
-            Logic();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            jugador.move(velocidadJugador * -1, 0);
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            jugador.move(velocidadJugador, 0);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            jugador.move(0, velocidadJugador * -1);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            jugador.move(0, velocidadJugador);
+        }
+
+        window.clear();
+
+        for (auto& banda : bandas) {
+            banda.move(velocidadObstaculos);
+            banda.update();
+            banda.draw(window);
+            banda.reiniciarPosicionesObstaculos();
+        }
+        
+        jugador.draw(window);
+        window.display();
     }
-};
-int main()
-{
-    cLane lane1(20);
-    for (int i = 0; i < 20; i++)
-    {
-        if (lane1.CheckPos(i))
-            cout << "1";
-        else
-            cout << "0";
-    }
-    lane1.Move();
-    cout << endl;
-    for (int i = 0; i < 20; i++)
-    {
-        if (lane1.CheckPos(i))
-            cout << "1";
-        else
-            cout << "0";
-    }
-    getchar();
     return 0;
 }
