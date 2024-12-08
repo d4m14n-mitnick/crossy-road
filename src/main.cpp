@@ -24,6 +24,10 @@ int main(){
             }
         }
 
+        if (jugador.senalColision(banda1) || jugador.senalColision(banda2) || jugador.senalColision(banda3) || jugador.senalColision(banda4)) {
+            window.close();
+        }
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             jugador.move(velocidadJugador * -1, 0);
         }
