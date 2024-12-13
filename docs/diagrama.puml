@@ -1,0 +1,99 @@
+@startuml Diagrama
+
+class Nivel{
+    - Jugador jugador
+    - Obstaculo obstaculos[5]
+    - BandaTransportadora bandas[4]
+    - VentanaGanador ventanaGanador
+    - VentanaPerdedor ventanaPerdedor
+    - double velocidadJugador
+    - double velocidadObstaculos
+    - int width
+    - int height
+    - bool senalColisionBanda
+    - bool senalSalir
+    + Ejecutar(RenderWindow window)
+}
+class Jugador{
+    - RectangleShape shape
+    - Sprite sprite
+    - Texture texture
+    - Vector2f posicionInicial
+    - float width
+    - float height
+    - int frameIzquierd
+    - int frameDerecha
+    - int frameArriba
+    - int frameAbajo
+    + Jugador(Vector2f position, Color color)
+    + void reiniciarPosicion()
+    + void draw(RenderWindow window)
+    + void move(float offsetX, float offsetY, Obstaculo obstaculos[])
+    + void controlarMovimientos(float velocidadJugador, Obstaculo obstaculos[])
+    + bool detectarColision(BandaTransportadora banda)
+    + Vector2f getPosition()
+}
+class Obstaculo{
+    # RectangleShape shape
+    # Sprite sprite
+    # Texture texture
+    # float width
+    # float height
+    + Obstaculo(Vector2f posicion, Color color, float width, float height, string rutaImagen)
+    + void draw(RenderWindow window)
+    + bool detectarColision(FloatRect jugadorBounds)
+    + FloatRect getBounds()
+    + Vector2f getPosition()
+}
+class ObstaculoMovil{
+    - float limitePosicion
+    - float posicionInicial
+    - bool sentido
+    + ObstaculoMovil(Vector2f posicion, Color color, float width, float height, float limitePosicion, bool sentido, string rutaImagen)
+    + void move(float offsetX)
+    + void reiniciarPosicion()
+}
+class BandaTransportadora{
+    - RectangleShape shape
+    - Sprite sprite
+    - Texture texture
+    - Clock clock
+    - float frameTime
+    - int currentFrame
+    - int numFrames
+    - int frameWidth
+    - int frameHeight
+    - float width
+    - float height
+    - ObstaculoMovil obstaculos[]
+    + BandaTransportadora(Vector2f posicion, int noObstaculos, Color colorObstaculos, float width, float height, float separacionObstaculos, bool sentido, string rutaImagen)
+    + void draw(RenderWindow& window)
+    + void move(float offsetX)
+    + void update()
+    + void reiniciarPosicionesObstaculos()
+    + bool detectarColision(FloatRect jugadorBounds)
+}
+class VentanaPerdedor{
+    - bool isMouseOverText(Text text, RenderWindow window)
+    + bool ejecutar(RenderWindow window)
+}
+class VentanaGanador{
+    - bool isMouseOverText(Text text, RenderWindow window)
+    + bool ejecutar(RenderWindow window)
+}
+
+Nivel "1" *-- "1" Jugador
+Nivel "1" *-- "*" Obstaculo
+Nivel "1" *-- "*" BandaTransportadora
+Nivel "1" *-- "1" VentanaPerdedor
+Nivel "1" *-- "1" VentanaGanador
+
+Jugador "1" o-- "*" Obstaculo
+Jugador "1" o-- "*" BandaTransportadora
+
+ObstaculoMovil --|> Obstaculo
+
+BandaTransportadora "1" *-- "*" ObstaculoMovil
+
+
+@enduml
